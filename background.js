@@ -1,65 +1,69 @@
-const PRODUCTIVE_SITES = [
-  "geeksforgeeks.org",
-  "wikipedia.org",
-  "coursera.org",
-  "khanacademy.org",
-  "nptel.ac.in"
-];
-
-let activeUrl = null;
+let activeTabId = null;
 let startTime = null;
 
+const productiveSites = [
+  "leetcode.com",
+  "geeksforgeeks.org",
+  "github.com",
+  "developer.mozilla.org",
+  "w3schools.com",
+  "coursera.org",
+  "udemy.com",
+  "khanacademy.org"
+];
+
 function isProductive(url) {
-  return PRODUCTIVE_SITES.some(site => url && url.includes(site));
+  return productiveSites.some(site => url.includes(site));
 }
 
-function getTopic(url) {
-  return PRODUCTIVE_SITES.find(site => url.includes(site)) || "Other";
-}
-
-chrome.tabs.onActivated.addListener(async ({ tabId }) => {
-  const tab = await chrome.tabs.get(tabId);
-  handleTab(tab.url);
-});
-
-chrome.tabs.onUpdated.addListener((_, info, tab) => {
-  if (info.status === "complete") {
-    handleTab(tab.url);
+chrome.tabs.onActivated.addListener(async (info) => {
+  try {
+    const tab = await chrome.tabs.get(info.tabId);
+    handleTabChange(tab);
+  } catch (e) {
+    console.error(e);
   }
 });
 
-function handleTab(url) {
-  if (activeUrl && startTime) saveTime();
-  if (isProductive(url)) {
-    activeUrl = url;
-    startTime = Date.now();
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === "complete") {
+    handleTabChange(tab);
+  }
+});
+
+function handleTabChange(tab) {
+  if (!tab || !tab.url) return;
+
+  const now = Date.now();
+
+  if (activeTabId && startTime) {
+    const duration = Math.floor((now - startTime) / 1000);
+
+    chrome.storage.local.get(["timeData", "points"], (res) => {
+      const data = res.timeData || {};
+      const points = res.points || 0;
+
+      if (isProductive(tab.url)) {
+        const topic = new URL(tab.url).hostname;
+        data[topic] = (data[topic] || 0) + duration;
+
+        // 1 point per 10 seconds
+        const earned = Math.floor(duration / 10);
+
+        chrome.storage.local.set({
+          timeData: data,
+          points: points + earned,
+          lastActive: new Date().toDateString()
+        });
+      }
+    });
+  }
+
+  if (isProductive(tab.url)) {
+    activeTabId = tab.id;
+    startTime = now;
   } else {
-    activeUrl = null;
+    activeTabId = null;
     startTime = null;
   }
 }
-
-function saveTime() {
-  const seconds = Math.floor((Date.now() - startTime) / 1000);
-  const topic = getTopic(activeUrl);
-
-  chrome.storage.local.get(["timeData", "points"], res => {
-    const timeData = res.timeData || {};
-    timeData[topic] = (timeData[topic] || 0) + seconds;
-
-    const points = (res.points || 0) + Math.floor(seconds / 10);
-
-    chrome.storage.local.set({ timeData, points });
-  });
-}
-
-chrome.alarms.create("dailyReminder", { periodInMinutes: 1440 });
-
-chrome.alarms.onAlarm.addListener(() => {
-  chrome.notifications.create({
-    type: "basic",
-    iconUrl: "icons/icon.png",
-    title: "Focused Reminder",
-    message: "Study today to keep your learning streak!"
-  });
-});

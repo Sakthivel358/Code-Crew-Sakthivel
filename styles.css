@@ -1,19 +1,45 @@
 body {
-  background: #121212;
-  color: #ffffff;
+  background: #f5f5f5;
+  color: #111;
   font-family: Arial, sans-serif;
   padding: 10px;
   width: 300px;
+  margin: 0;
 }
 
-h2, h3 {
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+h3 {
   margin: 6px 0;
+  font-size: 14px;
+}
+
+.toggle {
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toggle input {
+  cursor: pointer;
 }
 
 .stats {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
+  font-size: 13px;
 }
 
 button {
@@ -23,10 +49,34 @@ button {
   background: #1f6feb;
   color: white;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
 }
 
+button:hover {
+  background: #1558c0;
+}
+
 canvas {
-  background: #1e1e1e;
+  background: #eeeeee;
   margin-top: 5px;
+  border-radius: 4px;
+}
+
+/* 🌙 DARK MODE */
+body.dark {
+  background: #121212;
+  color: #ffffff;
+}
+
+body.dark canvas {
+  background: #1e1e1e;
+}
+
+body.dark button {
+  background: #238636;
+}
+
+body.dark button:hover {
+  background: #2ea043;
 }
