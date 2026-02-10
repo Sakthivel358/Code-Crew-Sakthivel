@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Focused</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h2>Focused Learning</h2>
+
+  <div class="stats">
+    <div id="time">0 min</div>
+    <div id="streak">Streak: 0</div>
+    <div id="points">Points: 0</div>
+  </div>
+
+  <h3>Time per Topic</h3>
+  <canvas id="chart" width="260" height="120"></canvas>
+
+  <h3>Weekly Insight</h3>
+  <p id="insight">No data yet</p>
+
+  <button id="restore">Restore Streak (50 pts)</button>
+  <button id="exportCsv">Export CSV</button>
+
+  <script src="popup.js"></script>
+</body>
+</html>

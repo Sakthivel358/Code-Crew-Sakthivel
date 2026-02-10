@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Focused Learning Tracker",
+  "version": "1.0",
+  "description": "Track productive learning time, streaks, points, and weekly insights.",
+  "permissions": [
+    "storage",
+    "tabs",
+    "alarms",
+    "notifications"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "128": "icons/icon.png"
+    }
+  },
+  "icons": {
+    "128": "icons/icon.png"
+  }
+}
